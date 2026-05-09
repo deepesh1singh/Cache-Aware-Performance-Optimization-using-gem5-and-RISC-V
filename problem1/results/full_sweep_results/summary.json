@@ -1,0 +1,65 @@
+{
+  "total_configurations": 108,
+  "successful_runs": 108,
+  "failed_runs": 0,
+  "timestamp": "2026-02-04T01:12:19.440201",
+  "parameters": {
+    "l1i_sizes": [
+      "16kB"
+    ],
+    "l1d_sizes": [
+      "16kB",
+      "32kB",
+      "64kB"
+    ],
+    "l2_sizes": [
+      "128kB",
+      "256kB",
+      "512kB",
+      "1MB"
+    ],
+    "l1_assocs": [
+      2,
+      4,
+      8
+    ],
+    "l2_assocs": [
+      4,
+      8,
+      16
+    ]
+  },
+  "best_execution_time": {
+    "config": {
+      "l1i_size": "16kB",
+      "l1d_size": "64kB",
+      "l2_size": "1MB",
+      "l1i_assoc": 8,
+      "l1d_assoc": 8,
+      "l2_assoc": 4
+    },
+    "sim_ticks": 1016018364000
+  },
+  "best_l1d_hit_rate": {
+    "config": {
+      "l1i_size": "16kB",
+      "l1d_size": "64kB",
+      "l2_size": "128kB",
+      "l1i_assoc": 8,
+      "l1d_assoc": 8,
+      "l2_assoc": 4
+    },
+    "hit_rate": 0.49950484353880764
+  },
+  "best_l2_hit_rate": {
+    "config": {
+      "l1i_size": "16kB",
+      "l1d_size": "16kB",
+      "l2_size": "1MB",
+      "l1i_assoc": 2,
+      "l1d_assoc": 2,
+      "l2_assoc": 4
+    },
+    "hit_rate": 0.9992495867818819
+  }
+}
