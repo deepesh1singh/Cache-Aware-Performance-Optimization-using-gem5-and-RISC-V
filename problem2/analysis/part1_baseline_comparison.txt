@@ -1,0 +1,21 @@
+PART 1: BASELINE COMPARISON
+Default Configuration: L1I=32KiB/8-way, L1D=64KiB/8-way, L2=512KiB/16-way
+       Metric  Simple MergeSort  Chunked MergeSort Chunked/Simple Ratio
+    sim_ticks      4.441701e+12       4.284820e+12               0.965x
+  sim_seconds      4.441701e+00       4.284820e+00               0.965x
+    sim_insts      1.186683e+09       1.162543e+09               0.980x
+          ipc      2.671690e-01       2.713170e-01               1.016x
+          cpi      3.742956e+00       3.685732e+00               0.985x
+ l1d_accesses      3.137421e+08       3.076046e+08               0.980x
+   l1d_misses      6.102925e+06       5.595426e+06               0.917x
+l1d_miss_rate      1.945200e-02       1.819000e-02               0.935x
+ l1d_hit_rate      9.805480e-01       9.818097e-01               1.001x
+ l1i_accesses      1.615806e+09       1.584327e+09               0.981x
+   l1i_misses      4.190000e+02       4.400000e+02               1.050x
+l1i_miss_rate      0.000000e+00       0.000000e+00                  N/A
+ l1i_hit_rate      9.999997e-01       9.999997e-01               1.000x
+  l2_accesses      6.103349e+06       5.595872e+06               0.917x
+    l2_misses      4.168862e+06       3.614427e+06               0.867x
+ l2_miss_rate      6.830450e-01       6.459100e-01               0.946x
+  l2_hit_rate      3.169550e-01       3.540905e-01               1.117x
+

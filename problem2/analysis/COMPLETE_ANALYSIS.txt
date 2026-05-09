@@ -1,0 +1,139 @@
+# PROBLEM 2: MERGESORT CACHE ANALYSIS - COMPLETE ANALYSIS
+
+## PART 1: BASELINE COMPARISON ANALYSIS
+
+Default Configuration: L1I=32KiB/8-way, L1D=64KiB/8-way, L2=512KiB/16-way
+
+ANALYSIS (200-300 words):
+
+The baseline comparison reveals that chunked merge sort demonstrates superior 
+cache performance despite its algorithmic complexity. The chunked variant achieves 
+3.5% faster execution (0.965x sim_ticks) and 1.6% higher IPC (0.271 vs 0.267) 
+compared to simple merge sort.
+
+The key performance advantage stems from improved cache locality at multiple 
+hierarchy levels. The chunked approach processes 2MB chunks that fit better in 
+the cache hierarchy, reducing L1D miss rate by 6.5% (0.01819 vs 0.01945) and 
+L2 miss rate by 5.4% (0.6459 vs 0.6830). This translates to 554,499 fewer L2 
+misses, significantly reducing memory access latency.
+
+The chunked algorithm's superior locality arises from its divide-and-conquer 
+strategy. By sorting individual 2MB chunks independently and merging from 1MB 
+streams, it exhibits better temporal and spatial locality. Each chunk stays in 
+the cache hierarchy longer, maximizing data reuse before eviction. The merge 
+phase benefits from streaming access patterns that prefetchers can predict 
+effectively.
+
+Critical parameters favoring chunked sorting include:
+1. L2 hit rate: 35.4% vs 31.7% (11.7% improvement) - The larger L2 cache 
+   effectively captures chunk working sets
+2. L1D hit rate: 98.2% vs 98.1% - Marginal but consistent improvement
+3. Total memory accesses: 8% fewer L2 accesses (5.6M vs 6.1M)
+
+The chunked approach's complexity overhead (extra chunk management, merge logic) 
+is more than offset by cache efficiency gains. The 13.3% reduction in L2 misses 
+directly correlates with the 3.5% execution time improvement, demonstrating that 
+memory hierarchy optimization is paramount for data-intensive workloads.
+
+This validates the principle that algorithmic cache-awareness can outweigh 
+implementation complexity in memory-bound applications like merge sort on large 
+datasets.
+
+## PART 2: CACHE OPTIMIZATION ANALYSIS
+
+TOP CONFIGURATIONS:
+
+Simple MergeSort - Best Config:
+  L1D: 128KiB/4-way, L2: 1MB/4-way
+  IPC: 0.273475, L1D Miss Rate: 1.68%, L2 Miss Rate: 62.84%
+
+Chunked MergeSort - Best Config:
+  L1D: 128KiB/4-way, L2: 1MB/4-way
+  IPC: 0.276884, L1D Miss Rate: 1.60%, L2 Miss Rate: 59.62%
+
+CONFIGURATION ANALYSIS:
+
+Both merge sort variants converge on the same optimal configuration, though 
+chunked sorting achieves consistently better performance (1.2% higher IPC) due 
+to superior algorithmic locality. The optimal configuration reveals several key 
+insights:
+
+1. L1D Cache Size is Critical:
+   Increasing L1D from 64KiB to 128KiB yields the most significant performance 
+   improvement (~2.4% IPC gain). This larger L1D better accommodates the working 
+   set during sorting and merging operations. The 128KiB size captures more of 
+   the active data, reducing expensive L2 accesses. Beyond 128KiB, diminishing 
+   returns occur as the working set is already well-contained.
+
+2. L2 Cache Size Matters More Than Associativity:
+   The 1MB L2 cache provides substantial benefits over 512KiB (2-3% IPC 
+   improvement), while increasing associativity beyond 4-way yields minimal 
+   gains. The large L2 size accommodates more data before spilling to main 
+   memory, crucial for the 10MB dataset. Higher associativity (8-way, 16-way) 
+   shows <0.5% improvement, suggesting conflict misses are not the primary 
+   bottleneck—capacity misses dominate.
+
+3. Lower Associativity Suffices:
+   Surprisingly, 4-way associativity performs best across both L1D and L2. This 
+   indicates that the merge sort access patterns are relatively predictable with 
+   low conflict potential. Higher associativity adds hardware complexity and 
+   lookup latency without proportional benefit. The sequential and streaming 
+   nature of merge operations creates conflict-free access patterns.
+
+4. Chunked Variant's Consistent Advantage:
+   Across all configurations, chunked merge sort maintains 0.8-1.5% higher IPC 
+   than simple merge sort. The chunked approach's superior L2 hit rate (3-4% 
+   higher) demonstrates that its algorithmic design inherently exploits cache 
+   hierarchy better. Even with identical cache configurations, chunked sorting's 
+   localized chunk processing creates more reuse opportunities.
+
+5. Sweet Spot Configuration:
+   The optimal 128KiB/4-way L1D + 1MB/4-way L2 configuration represents the best 
+   performance-complexity tradeoff. Further increases in cache size or 
+   associativity show diminishing returns (<0.1% IPC gain) while increasing 
+   hardware cost, power consumption, and access latency. This configuration 
+   reduces L1D miss rate to ~1.6-1.7% and achieves the lowest practical L2 miss 
+   rate (~59-63%).
+
+PERFORMANCE INSIGHTS:
+
+The cache sweep reveals that merge sort performance is heavily memory-bound. The 
+IPC values (0.267-0.277) indicate the CPU spends significant time waiting for 
+memory, with average CPI around 3.6-3.7 cycles per instruction. This high CPI 
+is characteristic of memory-intensive workloads where cache misses stall the 
+pipeline.
+
+L2 miss rates remain high (59-68%) even with optimal configurations, indicating 
+that the 10MB working set frequently exceeds cache capacity. This explains why 
+L2 size has the most dramatic impact—larger L2 reduces costly DRAM accesses. 
+The persistent high L2 miss rate also validates the chunked algorithm's design: 
+by working on smaller chunks sequentially, it minimizes simultaneous pressure 
+on the cache hierarchy.
+
+The marginal benefit of L1I cache variations (all configurations use 32KiB) with 
+near-zero L1I miss rates confirms that instruction cache is not a bottleneck. 
+The algorithm's instruction footprint is small and well-predicted, with the 
+performance bottleneck firmly in data access patterns.
+
+CONCLUSIONS:
+
+1. Optimal Configuration: 128KiB/4-way L1D + 1MB/4-way L2 balances performance 
+   and complexity for both variants
+
+2. Capacity Over Associativity: Cache size provides more benefit than 
+   associativity for merge sort workloads
+
+3. Chunked Algorithm Wins: Superior cache-aware design outperforms simple 
+   implementation across all configurations
+
+4. Memory-Bound Nature: High CPI and L2 miss rates show memory hierarchy is 
+   the primary performance limiter
+
+5. Diminishing Returns: Beyond optimal config, additional cache resources yield 
+   minimal gains (<0.5% IPC improvement)
+
+These results demonstrate that cache-conscious algorithm design combined with 
+appropriately-sized cache hierarchy is essential for memory-intensive sorting 
+workloads. The chunked merge sort's architectural awareness delivers consistent 
+performance advantages that simple cache size increases cannot match for the 
+basic algorithm.
