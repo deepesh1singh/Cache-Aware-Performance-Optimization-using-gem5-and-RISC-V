@@ -1,4 +1,0 @@
-Scenario,L1I,L1D,L2,L1_Assoc,L2_Assoc,Exec_Time_ticks,Total_Cache_KB,Justification
-High-Performance,16kB,64kB,1MB,8/8,4,1016018364000,1104,Maximizes performance with largest caches and optimal associativity
-Power-Constrained,16kB,16kB,256kB,2/2,4,1058220054000,288,Minimizes cache size while maintaining acceptable performance
-Balanced,16kB,16kB,256kB,8/8,4,1049895993000,288,Optimal performance-to-cost ratio
